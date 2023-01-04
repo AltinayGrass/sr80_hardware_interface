@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/agan/ws_moveit/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/agan/ws_moveit/src/actionlib_tutorials/include/**",
+        "/home/agan/ws_moveit/src/moveit_bt/include/**",
+        "/home/agan/ws_moveit/src/sr80_hardware_interface/include/**",
+        "/usr/include/**",
+        "/home/agan/ADS/AdsLib/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

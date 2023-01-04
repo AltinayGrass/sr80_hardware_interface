@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+    <rosparam file="$(find sr80_hardware_interface)/config/sr80_hwi_config.yaml" command="load"></rosparam>
+    <node pkg="sr80_hardware_interface" name="sr80_hwi_node" type="sr80_hwi_node" output="screen"></node>
+
+</launch>
