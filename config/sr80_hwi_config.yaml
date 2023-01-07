@@ -10,7 +10,7 @@ SR80:
     loop_hz: 50
 
 ads_config:
-# remote_ipv4: "169.254.186.54"  
-  remote_ipv4: "192.168.225.129"
-# remote_net_id: "172.18.212.67.1.1"                       #"41.118.185.65.1.1"
-  remote_net_id: "41.118.185.65.1.1"
+#  remote_ipv4: "169.254.186.54"               
+  remote_ipv4: "192.168.225.129"       #TcBSD sanal
+#  remote_net_id: "172.18.212.67.1.1"                  
+  remote_net_id: "41.118.185.65.1.1"   #TcBSD sanal

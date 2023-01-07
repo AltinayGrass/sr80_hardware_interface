@@ -4,7 +4,7 @@
 
 ADS_Worker::ADS_Worker(const std::string& remote_ipv4, const std::string& remote_net_id)
 {
-
+    //ROS_INFO("Debug %s", "ADS worker crate");
     auto ids = splitNetIdToIntegers(remote_net_id);
     
     m_RemoteNetID = AmsNetId(
@@ -55,18 +55,19 @@ ADS_Worker::~ADS_Worker()
 sensor_msgs::JointState ADS_Worker::readFromADS(const std::size_t num_joints)
 {
     sensor_msgs::JointState jointState;
-
-    std::vector<double> positionArray;
-    std::vector<double> velocityArray;
+    //ROS_INFO("Debug %s", "ADS worker read from ads1");
+    std::array<double, 6> positionArray;
+    std::array<double, 6> velocityArray;
 
     try
     {
-        AdsVariable<std::vector<double>> positionVar{*m_Route, "GVL.fActPose_Arm"};
-        AdsVariable<std::vector<double>> velocityVar{*m_Route, "GVL.fActVel_Arm"};
+        //ROS_INFO("Debug %s", "ADS worker read from ads2");
+        AdsVariable<std::array<double, 6>> positionVar{*m_Route, "GVL.fActPose_Arm"};
+        AdsVariable<std::array<double, 6>> velocityVar{*m_Route, "GVL.fActVel_Arm"};
 
         positionArray = positionVar;
         velocityArray = velocityVar;
-        
+        //ROS_INFO("Debug %s", "ADS worker read from ads2.5");
         
     }catch(const AdsException& ex){
         std::cout << "Error Code: " << ex.errorCode << std::endl;
@@ -74,7 +75,7 @@ sensor_msgs::JointState ADS_Worker::readFromADS(const std::size_t num_joints)
     }catch(const std::runtime_error& ex){
         std::cout << ex.what() << std::endl;
     }
-
+    //ROS_INFO("Debug %s , %ld  , %ld , %ld", "ADS worker read from ads3",num_joints,jointState.position.size(),jointState.velocity.size());
     int j = 0;
     while(jointState.position.size() != num_joints && jointState.velocity.size() != num_joints)
     {
@@ -82,20 +83,32 @@ sensor_msgs::JointState ADS_Worker::readFromADS(const std::size_t num_joints)
         jointState.velocity.push_back(velocityArray[j]);
         j += 1;
     }
-
+    //ROS_INFO("Debug %s", "ADS worker read from ads4");
     return jointState;
 
 }
 
 bool ADS_Worker::writeToADS(std::size_t num_joints, const std::vector<double>& pose, const std::vector<double>& vel)
 {
+   
+        std::array<double, 6> posToWrite;
+        std::array<double, 6> velToWrite;
+        
     try{
 
-        AdsVariable<std::vector<double>> adsPosVar{*m_Route, "GVL.fGoalPos_Arm"};
-        AdsVariable<std::vector<double>> adsVelVar{*m_Route, "GVL.fGoalVel_Arm"};
+        AdsVariable<std::array<double, 6>> adsPosVar{*m_Route, "GVL.fGoalPos_Arm"};
+        AdsVariable<std::array<double, 6>> adsVelVar{*m_Route, "GVL.fGoalVel_Arm"};
+        int j =0;
 
-        adsPosVar = pose;
-        adsVelVar = vel;
+        while (j<6)
+        {
+            posToWrite[j] = pose.at(j);
+            velToWrite[j] = vel.at(j);
+            j+=1;
+        }    
+
+        adsPosVar=posToWrite;
+        adsVelVar=posToWrite;
 
     }catch(const AdsException& ex){
         std::cout << "Error Code: " << ex.errorCode << std::endl;

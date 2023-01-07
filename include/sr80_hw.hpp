@@ -5,8 +5,9 @@
 
 #include <hardware_interface/robot_hw.h>
 #include <hardware_interface/joint_state_interface.h>
-#include <hardware_interface/posvel_command_interface.h>
+//#include <hardware_interface/posvel_command_interface.h>
 #include <hardware_interface/posvelacc_command_interface.h>
+#include <ros/console.h>
 
 #include <iostream>
 

@@ -8,6 +8,7 @@
 #include <ros/ros.h>
 #include <controller_manager/controller_manager.h>
 #include <boost/shared_ptr.hpp>
+#include <ros/console.h>
 
 namespace SR80
 {

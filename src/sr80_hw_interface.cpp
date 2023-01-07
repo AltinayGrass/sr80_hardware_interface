@@ -5,9 +5,15 @@ namespace SR80
     HardwareInterface::HardwareInterface(ros::NodeHandle& nh)
         : m_NodeHandle(nh)
     {
+
         if(m_NodeHandle.hasParam("/SR80/hardware_interface/joints"))
         {    
             m_NodeHandle.getParam("/SR80/hardware_interface/joints", m_JointNames);
+
+            if(m_JointNames.size() == 0)
+            {
+                ROS_FATAL_STREAM_NAMED("init", "No joint names found in the parameter server.");
+            }
 
         }
         else
@@ -16,7 +22,7 @@ namespace SR80
             if(ros::ok())
                 ros::shutdown();
         }
-
+        //ROS_INFO("Debug %s", "1");
         m_NumJoints = m_JointNames.size();
 
         m_JointPositions.resize(m_NumJoints);
@@ -25,14 +31,17 @@ namespace SR80
 
         m_PositionCommand.resize(m_NumJoints);
         m_VelocityCommand.resize(m_NumJoints);
+        m_AccelCommand.resize(m_NumJoints);
+        
+
 
         for(std::size_t i = 0; i < m_NumJoints; i++)
         {
             hardware_interface::JointStateHandle tempJSH(
                 m_JointNames.at(i),
-                &m_JointPositions[i],
-                &m_JointVelocities[i],
-                &m_JointEfforts[i]
+                &m_JointPositions.at(i),
+                &m_JointVelocities.at(i),
+                &m_JointEfforts.at(i)
             );
 
             m_JointStateInterface.registerHandle(tempJSH);
@@ -47,7 +56,7 @@ namespace SR80
             m_PosVelAccJointInterface.registerHandle(posVelAccJointHandle);
 
         }
-
+        //ROS_INFO("Debug %s", "2");
         this->registerInterface(&m_JointStateInterface);
         this->registerInterface(&m_PosVelAccJointInterface);
 
@@ -78,7 +87,7 @@ namespace SR80
         m_WorkerADS = new ADS_Worker(remoteIPV4, remoteNetId);
 
         m_NodeHandle.param("/SR80/hardware_interface/loop_hz", m_LoopFrequency, 0.1);
-
+        //ROS_INFO("Debug %s", "3");
         ros::Duration updateFreq = ros::Duration(1.0 / m_LoopFrequency);
 
         m_Loop = m_NodeHandle.createTimer(updateFreq, &HardwareInterface::update, this);
@@ -92,23 +101,27 @@ namespace SR80
 
     void HardwareInterface::read()
     {
+        //ROS_INFO("Debug %s", "HW read1");
         sensor_msgs::JointState actJointStates = m_WorkerADS->readFromADS(m_NumJoints);
         m_JointPositions = actJointStates.position;
         m_JointVelocities = actJointStates.velocity;
+        //ROS_INFO("Debug %s", "HW read2");
     }
 
     void HardwareInterface::write(const ros::Duration& elapsed_time)
     {
+        //ROS_INFO("Debug %s", "HW wrıte1");
         m_WorkerADS->writeToADS(
             m_NumJoints,
             m_PositionCommand,
-            m_VelocityCommand
+           m_VelocityCommand
         );
     }
 
     template<typename T>
     void HardwareInterface::write(const ros::Duration& elapsed_time, const std::string& symbol_name, T var)
     {
+        //ROS_INFO("Debug %s", "HW write2");
         m_WorkerADS->writeToADS(
             var,
             symbol_name
@@ -118,7 +131,7 @@ namespace SR80
     void HardwareInterface::update(const ros::TimerEvent& timer_event)
     {
         m_ElapsedTime = ros::Duration(timer_event.current_real - timer_event.last_real);
-
+        //ROS_INFO("Debug %s", "HW update");
         this->read();
 
         m_ControllerManager->update(timer_event.current_real, m_ElapsedTime);
