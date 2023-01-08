@@ -88,27 +88,31 @@ sensor_msgs::JointState ADS_Worker::readFromADS(const std::size_t num_joints)
 
 }
 
-bool ADS_Worker::writeToADS(std::size_t num_joints, const std::vector<double>& pose, const std::vector<double>& vel)
+bool ADS_Worker::writeToADS(std::size_t num_joints, const std::vector<double>& pose, const std::vector<double>& vel, const std::vector<double>& acc)
 {
    
         std::array<double, 6> posToWrite;
         std::array<double, 6> velToWrite;
-        
+        std::array<double, 6> accToWrite;
     try{
 
         AdsVariable<std::array<double, 6>> adsPosVar{*m_Route, "GVL.fGoalPos_Arm"};
         AdsVariable<std::array<double, 6>> adsVelVar{*m_Route, "GVL.fGoalVel_Arm"};
+        AdsVariable<std::array<double, 6>> adsAccVar{*m_Route, "GVL.fGoalAcc_Arm"};
+        
         int j =0;
 
         while (j<6)
         {
             posToWrite[j] = pose.at(j);
             velToWrite[j] = vel.at(j);
+            accToWrite[j] = acc.at(j);
             j+=1;
         }    
 
         adsPosVar=posToWrite;
-        adsVelVar=posToWrite;
+        adsVelVar=velToWrite;
+        adsAccVar=accToWrite;
 
     }catch(const AdsException& ex){
         std::cout << "Error Code: " << ex.errorCode << std::endl;

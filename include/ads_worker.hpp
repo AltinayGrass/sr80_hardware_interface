@@ -20,7 +20,7 @@ class ADS_Worker
     ADS_Worker(const std::string& remote_ipv4, const std::string& remote_net_id);
     ~ADS_Worker();
 
-    bool writeToADS(std::size_t num_joints, const std::vector<double>& pose, const std::vector<double>& vel);
+    bool writeToADS(std::size_t num_joints, const std::vector<double>& pose, const std::vector<double>& vel, const std::vector<double>& acc);
     template<typename T>
     bool writeToADS(T var, const std::string& symbol_name);
 

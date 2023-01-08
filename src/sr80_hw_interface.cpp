@@ -114,7 +114,8 @@ namespace SR80
         m_WorkerADS->writeToADS(
             m_NumJoints,
             m_PositionCommand,
-           m_VelocityCommand
+            m_VelocityCommand,
+            m_AccelCommand
         );
     }
 
